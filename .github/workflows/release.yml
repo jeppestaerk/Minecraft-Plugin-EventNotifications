@@ -40,4 +40,5 @@ jobs:
           files: |
             fabric/build/libs/*.jar
             paper/build/libs/eventnotifications-paper-*.jar
+            neoforge/build/libs/eventnotifications-neoforge-*.jar
           generate_release_notes: true

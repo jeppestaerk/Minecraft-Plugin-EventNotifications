@@ -41,3 +41,9 @@ jobs:
         with:
           name: eventnotifications-paper-${{ steps.version.outputs.version }}
           path: paper/build/libs/eventnotifications-paper-*.jar
+
+      - name: Upload NeoForge artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: eventnotifications-neoforge-${{ steps.version.outputs.version }}
+          path: neoforge/build/libs/eventnotifications-neoforge-*.jar
