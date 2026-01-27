@@ -34,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: eventnotifications-fabric-${{ steps.version.outputs.version }}
-          path: fabric/build/libs/*.jar
+          path: fabric/build/libs/eventnotifications-fabric-*.jar
 
       - name: Upload Paper artifact
         uses: actions/upload-artifact@v6

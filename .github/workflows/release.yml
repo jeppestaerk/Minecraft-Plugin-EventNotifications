@@ -38,7 +38,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            fabric/build/libs/*.jar
+            fabric/build/libs/eventnotifications-fabric-*.jar
             paper/build/libs/eventnotifications-paper-*.jar
             neoforge/build/libs/eventnotifications-neoforge-*.jar
           generate_release_notes: true

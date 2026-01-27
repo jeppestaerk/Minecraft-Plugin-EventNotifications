@@ -22,6 +22,18 @@
       "automerge": false
     },
     {
+      "description": "Group NeoForge dependencies",
+      "matchPackagePatterns": ["^net.neoforged"],
+      "groupName": "NeoForge dependencies",
+      "automerge": false
+    },
+    {
+      "description": "Group Paper dependencies",
+      "matchPackagePatterns": ["^io.papermc"],
+      "groupName": "Paper dependencies",
+      "automerge": false
+    },
+    {
       "description": "Group Configurate dependencies",
       "matchPackagePatterns": ["^org.spongepowered:configurate"],
       "groupName": "Configurate",
