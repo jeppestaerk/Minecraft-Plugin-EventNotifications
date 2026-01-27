@@ -37,5 +37,7 @@ jobs:
           name: Release ${{ steps.version.outputs.version }}
           draft: false
           prerelease: false
-          files: fabric/build/libs/*.jar
+          files: |
+            fabric/build/libs/*.jar
+            paper/build/libs/eventnotifications-paper-*.jar
           generate_release_notes: true

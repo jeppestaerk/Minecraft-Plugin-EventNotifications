@@ -1,0 +1,8 @@
+name: EventNotifications
+version: ${version}
+main: dev.valhal.minecraft.plugin.EventNotifications.paper.PaperPlugin
+description: Send real-time notifications to various targets (ntfy, Discord, Slack, webhooks)
+author: Jeppe Staerk
+website: https://github.com/jeppestaerk/Minecraft-Plugin-EventNotifications
+api-version: '1.21'
+load: POSTWORLD

@@ -1,0 +1,57 @@
+# Valhal Event Notifications Configuration
+# Event templates are in the templates/ folder
+
+general:
+  # Server name for notifications (optional - uses server MOTD if not set)
+  server_name: ""
+
+# Notification targets
+# Uncomment and configure the targets you want to use
+#
+# Common options (available for all target types):
+#   icon: URL to notification icon (used as ntfy icon / Discord avatar / Slack image)
+#
+# Authentication options (optional, available for all target types):
+#   auth_type: none | basic | bearer
+#   auth_username: "username"     # Required for basic auth
+#   auth_password: "password"     # Required for basic auth
+#   auth_token: "your-token"      # Required for bearer auth
+
+targets:
+  # ntfy - Push notifications via ntfy.sh or self-hosted
+  # ntfy_main:
+  #   type: ntfy
+  #   enabled: true
+  #   server: "https://ntfy.sh"
+  #   topic: "my-topic"
+  #   markdown: true  # Enable markdown in messages (default: true)
+  #   icon: "https://example.com/server-icon.png"  # Optional notification icon (only supported on android)
+  #   # Optional authentication for private topics:
+  #   # auth_type: bearer
+  #   # auth_token: "tk_your_access_token"
+
+  # Discord - Webhook notifications
+  # discord_main:
+  #   type: discord
+  #   enabled: true
+  #   webhook_url: "https://discord.com/api/webhooks/..."
+  #   use_embeds: true  # (default: true)
+  #   icon: "https://example.com/server-icon.png"  # Optional webhook avatar
+
+  # Slack - Webhook notifications
+  # slack_main:
+  #   type: slack
+  #   enabled: true
+  #   webhook_url: "https://hooks.slack.com/services/..."
+  #   use_attachments: true  # Use attachments for colored messages (default: true)
+  #   icon: "https://example.com/server-icon.png"  # Optional webhook icon
+
+  # Generic webhook
+  # webhook_custom:
+  #   type: webhook
+  #   enabled: true
+  #   url: "https://example.com/webhook"
+  #   method: "POST"
+  #   # Optional authentication:
+  #   # auth_type: bearer
+  #   # auth_token: "your-api-token"

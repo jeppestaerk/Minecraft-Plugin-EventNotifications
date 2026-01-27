@@ -30,8 +30,14 @@ jobs:
         id: version
         run: echo "version=$(./gradlew properties -q | grep '^version:' | awk '{print $2}')" >> $GITHUB_OUTPUT
 
-      - name: Upload artifact
+      - name: Upload Fabric artifact
         uses: actions/upload-artifact@v6
         with:
-          name: valhal-eventnotifications-fabric-${{ steps.version.outputs.version }}
+          name: eventnotifications-fabric-${{ steps.version.outputs.version }}
           path: fabric/build/libs/*.jar
+
+      - name: Upload Paper artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: eventnotifications-paper-${{ steps.version.outputs.version }}
+          path: paper/build/libs/eventnotifications-paper-*.jar
