@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "eventnotifications",
+  "version": "${version}",
+  "name": "EventNotifications",
+  "description": "Send real-time notifications to various targets (ntfy, Discord, Slack, webhooks)",
+  "authors": [
+    "Jeppe Stærk"
+  ],
+  "contact": {
+    "sources": "https://github.com/jeppestaerk/Minecraft-Plugin-EventNotifications",
+    "issues": "https://github.com/jeppestaerk/Minecraft-Plugin-EventNotifications/issues"
+  },
+  "license": "MIT",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "dev.valhal.minecraft.plugin.EventNotifications.fabric.FabricMod"
+    ],
+    "server": [
+      "dev.valhal.minecraft.plugin.EventNotifications.fabric.FabricMod"
+    ]
+  },
+  "mixins": ["eventnotifications.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "fabric-api": "*",
+    "minecraft": ">=1.21.11",
+    "java": ">=21"
+  }
+}

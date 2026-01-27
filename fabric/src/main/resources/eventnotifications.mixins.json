@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "dev.valhal.minecraft.plugin.EventNotifications.fabric.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BanCommandMixin",
+    "OpCommandMixin",
+    "DeOpCommandMixin",
+    "KickCommandMixin",
+    "WhitelistCommandMixin",
+    "PardonCommandMixin",
+    "PlayerAdvancementTrackerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

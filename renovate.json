@@ -1,0 +1,36 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "dependencyDashboard": true,
+  "dependencyDashboardHeader": "This issue lists Renovate updates and detected dependencies.",
+  "rebaseWhen": "behind-base-branch",
+  "prCreation": "immediate",
+  "packageRules": [
+    {
+      "description": "Auto-merge patch updates for libraries",
+      "matchUpdateTypes": ["patch"],
+      "matchManagers": ["gradle", "gradle-wrapper"],
+      "automerge": true,
+      "automergeType": "pr",
+      "automergeStrategy": "squash",
+      "platformAutomerge": true
+    },
+    {
+      "description": "Group Fabric dependencies",
+      "matchPackagePatterns": ["^net.fabricmc"],
+      "groupName": "Fabric dependencies",
+      "automerge": false
+    },
+    {
+      "description": "Group Configurate dependencies",
+      "matchPackagePatterns": ["^org.spongepowered:configurate"],
+      "groupName": "Configurate",
+      "automerge": false
+    },
+    {
+      "description": "Minecraft - require manual review",
+      "matchPackageNames": ["com.mojang:minecraft"],
+      "automerge": false
+    }
+  ]
+}
