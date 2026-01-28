@@ -1,6 +1,6 @@
 [versions]
 # Project
-mod = "1.0.0"
+mod = "0.1.0"
 java = "21"
 
 # Minecraft / Fabric
