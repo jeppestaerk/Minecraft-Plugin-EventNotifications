@@ -1,19 +1,16 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*'
+  release:
+    types: [published]
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
       - name: Set up Java
         uses: actions/setup-java@v5
@@ -31,14 +28,10 @@ jobs:
         id: version
         run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-      - name: Create Release
+      - name: Upload files to release
         uses: softprops/action-gh-release@v2
         with:
-          name: Release ${{ steps.version.outputs.version }}
-          draft: false
-          prerelease: false
           files: |
-            fabric/build/libs/eventnotifications-fabric-*.jar
-            paper/build/libs/eventnotifications-paper-*.jar
-            neoforge/build/libs/eventnotifications-neoforge-*.jar
-          generate_release_notes: true
+            fabric/build/libs/eventnotifications-fabric-${{ steps.version.outputs.version }}.jar
+            paper/build/libs/eventnotifications-paper-${{ steps.version.outputs.version }}.jar
+            neoforge/build/libs/eventnotifications-neoforge-${{ steps.version.outputs.version }}.jar

@@ -1,0 +1,72 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+template: |
+  # What's Changed
+
+  $CHANGES
+
+  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
+
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+no-changes-template: 'No changes since last release.'
+
+categories:
+  - title: 'Breaking'
+    label: 'breaking'
+  - title: 'New'
+    label: 'feature'
+  - title: 'Bug Fixes'
+    label: 'bug'
+  - title: 'Security'
+    label: 'security'
+  - title: 'Maintenance'
+    label: 'maintenance'
+  - title: 'Documentation'
+    label: 'docs'
+  - title: 'Dependency Updates'
+    label: 'dependencies'
+    collapse-after: 5
+  - title: 'Other changes'
+
+version-resolver:
+  major:
+    labels:
+      - 'breaking'
+  minor:
+    labels:
+      - 'feature'
+  patch:
+    labels:
+      - 'bug'
+      - 'maintenance'
+      - 'docs'
+      - 'dependencies'
+      - 'security'
+  default: patch
+
+autolabeler:
+  - label: 'docs'
+    files:
+      - '*.md'
+      - 'docs/**/*'
+  - label: 'dependencies'
+    files:
+      - 'build.gradle'
+      - 'gradle.properties'
+      - 'gradle/**/*'
+  - label: 'maintenance'
+    files:
+      - '.github/**/*'
+  - label: 'breaking'
+    title:
+      - '/!:/'
+  - label: 'feature'
+    title:
+      - '/^feat(\(.+\))?:/'
+  - label: 'bug'
+    title:
+      - '/^fix(\(.+\))?:/'
+
+exclude-labels:
+  - 'skip-changelog'
