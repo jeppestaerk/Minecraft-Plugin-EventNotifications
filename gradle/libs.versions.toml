@@ -5,7 +5,6 @@ kotlin-jvm = "2.3.0"
 minecraft = "1.21.11"
 
 # Fabric
-yarn-mappings = "1.21.11+build.4"
 fabric-loader = "0.18.4"
 fabric-loom = "1.15-SNAPSHOT"
 fabric-api = "0.141.2+1.21.11"
@@ -38,7 +37,6 @@ snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
 
 # Fabric
-yarn-mappings = { module = "net.fabricmc:yarn", version.ref = "yarn-mappings" }
 fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
 fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
 fabric-language-kotlin = { module = "net.fabricmc:fabric-language-kotlin", version.ref = "fabric-language-kotlin" }
