@@ -33,6 +33,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            fabric/build/libs/eventnotifications-fabric-${{ steps.version.outputs.version }}.jar
-            paper/build/libs/eventnotifications-paper-${{ steps.version.outputs.version }}.jar
-            neoforge/build/libs/eventnotifications-neoforge-${{ steps.version.outputs.version }}.jar
+            fabric/build/libs/EventNotifications-Fabric-${{ steps.version.outputs.version }}.jar
+            paper/build/libs/EventNotifications-Paper-${{ steps.version.outputs.version }}.jar
+            neoforge/build/libs/EventNotifications-NeoForge-${{ steps.version.outputs.version }}.jar
