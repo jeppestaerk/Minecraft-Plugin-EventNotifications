@@ -1,6 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:recommended"
+  ],
   "dependencyDashboard": true,
   "dependencyDashboardHeader": "This issue lists Renovate updates and detected dependencies.",
   "rebaseWhen": "behind-base-branch",
@@ -11,8 +13,13 @@
   "packageRules": [
     {
       "description": "Auto-merge patch updates for libraries",
-      "matchUpdateTypes": ["patch"],
-      "matchManagers": ["gradle", "gradle-wrapper"],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "matchManagers": [
+        "gradle",
+        "gradle-wrapper"
+      ],
       "automerge": true,
       "automergeType": "pr",
       "automergeStrategy": "squash",
@@ -20,27 +27,42 @@
     },
     {
       "description": "Group Core dependencies",
-      "matchPackagePatterns": ["^org\\.jetbrains\\.kotlin", "^org\\.spongepowered", "^net\\.kyori", "org.yaml:snakeyaml", "io.leangen.geantyref:geantyref"],
       "groupName": "Core",
-      "automerge": false
+      "automerge": false,
+      "matchPackageNames": [
+        "/^org\\.jetbrains\\.kotlin/",
+        "/^org\\.spongepowered/",
+        "/^net\\.kyori/",
+        "/org.yaml:snakeyaml/",
+        "/io.leangen.geantyref:geantyref/"
+      ]
     },
     {
       "description": "Group Fabric dependencies",
-      "matchPackagePatterns": ["^net\\.fabricmc", "fabric-loom"],
       "groupName": "Fabric dependencies",
-      "automerge": false
+      "automerge": false,
+      "matchPackageNames": [
+        "/^net\\.fabricmc/",
+        "/fabric-loom/"
+      ]
     },
     {
       "description": "Group NeoForge dependencies",
-      "matchPackagePatterns": ["^net\\.neoforged"],
       "groupName": "NeoForge dependencies",
-      "automerge": false
+      "automerge": false,
+      "matchPackageNames": [
+        "/^net\\.neoforged/"
+      ]
     },
     {
       "description": "Group Paper dependencies",
-      "matchPackagePatterns": ["^io\\.papermc", "xyz.jpenilla.run-paper", "com.gradleup.shadow"],
       "groupName": "Paper dependencies",
-      "automerge": false
+      "automerge": false,
+      "matchPackageNames": [
+        "/^io\\.papermc/",
+        "/xyz.jpenilla.run-paper/",
+        "/com.gradleup.shadow/"
+      ]
     }
   ]
 }
