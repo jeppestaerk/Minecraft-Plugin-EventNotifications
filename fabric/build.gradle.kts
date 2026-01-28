@@ -11,7 +11,7 @@ loom {
     splitEnvironmentSourceSets()
 
     mods {
-        register("eventnotifications") {
+        register("EventNotifications-Fabric") {
             sourceSet(sourceSets["main"])
             sourceSet(sourceSets["client"])
         }

@@ -1,7 +1,6 @@
 [versions]
 # Core
 java = "21"
-kotlin-jvm = "2.3.0"
 minecraft = "1.21.11"
 
 # Fabric
@@ -48,9 +47,6 @@ paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
 neoforge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
 
 [plugins]
-# Core
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-jvm" }
-
 # Fabric
 fabric-loom = { id = "fabric-loom", version.ref = "fabric-loom" }
 
