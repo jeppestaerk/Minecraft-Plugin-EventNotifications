@@ -3,7 +3,7 @@ name: ntfy
 services:
 
   ntfy:
-    image: binwiederhier/ntfy
+    image: binwiederhier/ntfy:latest
     container_name: ntfy
     hostname: ntfy
     restart: unless-stopped
@@ -15,7 +15,7 @@ services:
       - "8880:80"
 
   ntfy-client:
-    image: binwiederhier/ntfy
+    image: binwiederhier/ntfy:latest
     container_name: ntfy-client
     hostname: ntfy-client
     restart: unless-stopped
