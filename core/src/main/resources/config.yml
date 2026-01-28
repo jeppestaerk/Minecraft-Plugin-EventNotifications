@@ -4,6 +4,10 @@
 general:
   # Server name for notifications (optional - uses server MOTD if not set)
   server_name: ""
+  # Enable in-game commands (/eventnotifications) for managing targets
+  commands_enabled: true
+  # Command alias (e.g., "notify" creates /notify as shortcut, empty string to disable)
+  command_alias: "notify"
 
 # Notification targets
 # Uncomment and configure the targets you want to use

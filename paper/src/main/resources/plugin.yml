@@ -6,3 +6,17 @@ author: Jeppe Staerk
 website: https://github.com/jeppestaerk/Minecraft-Plugin-EventNotifications
 api-version: '1.21'
 load: POSTWORLD
+
+commands:
+  eventnotifications:
+    description: Manage EventNotifications targets and settings
+    usage: /<command> [reload|list|info|enable|disable|set|message|help] [args...]
+    permission: eventnotifications.admin
+    # Note: To change the alias, edit this file directly. The config.yml command_alias only applies to Fabric/NeoForge.
+    aliases:
+      - notify
+
+permissions:
+  eventnotifications.admin:
+    description: Full access to EventNotifications commands
+    default: op

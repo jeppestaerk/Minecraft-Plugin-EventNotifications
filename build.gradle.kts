@@ -1,25 +1,37 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     java
+    kotlin("jvm") version libs.versions.kotlin.jvm
 }
-
-group = "dev.valhal"
-version = libs.versions.mod.get()
 
 val javaVersion = libs.versions.java.get().toInt()
 
 subprojects {
     apply(plugin = "java")
-
-    group = rootProject.group
-    version = rootProject.version
+    apply(plugin = "org.jetbrains.kotlin.jvm")
 
     java {
+        // withSourcesJar()
         sourceCompatibility = JavaVersion.toVersion(javaVersion)
         targetCompatibility = JavaVersion.toVersion(javaVersion)
     }
 
-    tasks.withType<JavaCompile> {
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.fromTarget(javaVersion.toString())
+        }
+    }
+
+    tasks.withType<JavaCompile>().configureEach {
         options.encoding = "UTF-8"
         options.release.set(javaVersion)
+    }
+
+    tasks.named<KotlinJvmCompile>("compileKotlin"){
+        compilerOptions {
+            jvmTarget = JvmTarget.fromTarget(javaVersion.toString())
+        }
     }
 }

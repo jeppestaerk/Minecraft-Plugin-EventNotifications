@@ -1,10 +1,13 @@
 package dev.valhal.minecraft.plugin.EventNotifications.neoforge;
 
+import dev.valhal.minecraft.plugin.EventNotifications.core.command.CommandHandler;
 import dev.valhal.minecraft.plugin.EventNotifications.core.config.ConfigLoader;
+import dev.valhal.minecraft.plugin.EventNotifications.core.config.ConfigManager;
 import dev.valhal.minecraft.plugin.EventNotifications.core.config.PluginConfig;
 import dev.valhal.minecraft.plugin.EventNotifications.core.config.TemplateLoader;
 import dev.valhal.minecraft.plugin.EventNotifications.core.event.EventBus;
 import dev.valhal.minecraft.plugin.EventNotifications.core.notification.NotificationService;
+import dev.valhal.minecraft.plugin.EventNotifications.neoforge.command.NeoForgeCommandAdapter;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLPaths;
@@ -22,6 +25,8 @@ public class NeoForgeMod {
     private EventBus eventBus;
     private NotificationService notificationService;
     private NeoForgeAsyncExecutor asyncExecutor;
+    private ConfigManager configManager;
+    private CommandHandler commandHandler;
 
     public NeoForgeMod(IEventBus modEventBus) {
         try {
@@ -30,7 +35,8 @@ public class NeoForgeMod {
             Path templatesDir = configDir.resolve("templates");
 
             ConfigLoader configLoader = new ConfigLoader(configFile);
-            PluginConfig config = configLoader.load();
+            configManager = new ConfigManager(configLoader, msg -> log(msg));
+            PluginConfig config = configManager.load();
 
             TemplateLoader templateLoader = new TemplateLoader(templatesDir);
             templateLoader.load();
@@ -40,6 +46,16 @@ public class NeoForgeMod {
 
             notificationService = new NotificationService(config, templateLoader, asyncExecutor, msg -> log(msg));
             notificationService.registerWithEventBus(eventBus);
+
+            // Register commands if enabled in config
+            if (config.commandsEnabled()) {
+                commandHandler = new CommandHandler(configManager, notificationService, msg -> log(msg));
+                NeoForgeCommandAdapter commandAdapter = new NeoForgeCommandAdapter(commandHandler, config.commandAlias());
+                NeoForge.EVENT_BUS.addListener(commandAdapter::onRegisterCommands);
+                log("Commands enabled");
+            } else {
+                log("Commands disabled in config");
+            }
 
             // Only use MOTD as server name if config doesn't specify one
             boolean useMotdAsServerName = config.serverName() == null || config.serverName().isBlank();

@@ -1,9 +1,11 @@
 package dev.valhal.minecraft.plugin.EventNotifications.paper;
 
 import dev.valhal.minecraft.plugin.EventNotifications.core.event.*;
-import org.bukkit.BanList;
+import io.papermc.paper.ban.BanListType;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.ban.ProfileBanList;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,6 +20,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.function.Consumer;
 
 public class PaperEventAdapter implements Listener {
+    private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.plainText();
+
     private final JavaPlugin plugin;
     private final EventBus eventBus;
     private final Consumer<String> serverNameCallback;
@@ -36,10 +40,10 @@ public class PaperEventAdapter implements Listener {
         Bukkit.getScheduler().runTask(plugin, () -> {
             if (!startupFired) {
                 startupFired = true;
-                String motd = Bukkit.getMotd();
-                if (motd != null && !motd.isBlank()) {
-                    // Strip color codes from MOTD
-                    serverNameCallback.accept(stripColors(motd));
+                // Use Adventure API - motd() returns a Component
+                String motd = PLAIN_SERIALIZER.serialize(Bukkit.motd());
+                if (!motd.isBlank()) {
+                    serverNameCallback.accept(motd);
                 } else {
                     serverNameCallback.accept("Minecraft Server");
                 }
@@ -73,10 +77,11 @@ public class PaperEventAdapter implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-        String deathMessage = event.getDeathMessage();
-        if (deathMessage == null) {
-            deathMessage = player.getName() + " died";
-        }
+        // Use Adventure API - deathMessage() returns a Component
+        var deathMessageComponent = event.deathMessage();
+        String deathMessage = deathMessageComponent != null
+                ? PLAIN_SERIALIZER.serialize(deathMessageComponent)
+                : player.getName() + " died";
         eventBus.publish(new dev.valhal.minecraft.plugin.EventNotifications.core.event.PlayerDeathEvent(
                 player.getUniqueId(),
                 player.getName(),
@@ -87,11 +92,13 @@ public class PaperEventAdapter implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerKick(PlayerKickEvent event) {
         Player player = event.getPlayer();
-        String reason = event.getReason();
+        // Use Adventure API - reason() returns a Component
+        String reason = PLAIN_SERIALIZER.serialize(event.reason());
 
-        // Check if this is a ban kick
-        if (Bukkit.getBanList(BanList.Type.NAME).isBanned(player.getName())) {
-            var banEntry = Bukkit.getBanList(BanList.Type.NAME).getBanEntry(player.getName());
+        // Check if this is a ban kick using the profile-based ban list
+        ProfileBanList banList = Bukkit.getBanList(BanListType.PROFILE);
+        if (banList.isBanned(player.getPlayerProfile())) {
+            var banEntry = banList.getBanEntry(player.getPlayerProfile());
             String banReason = banEntry != null && banEntry.getReason() != null ? banEntry.getReason() : "Banned";
             String bannedBy = banEntry != null && banEntry.getSource() != null ? banEntry.getSource() : "Server";
             eventBus.publish(new PlayerBannedEvent(
@@ -120,10 +127,8 @@ public class PaperEventAdapter implements Listener {
         }
 
         // Paper uses Adventure components - convert to plain text
-        String title = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText()
-                .serialize(advancement.getDisplay().title());
-        String description = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText()
-                .serialize(advancement.getDisplay().description());
+        String title = PLAIN_SERIALIZER.serialize(advancement.getDisplay().title());
+        String description = PLAIN_SERIALIZER.serialize(advancement.getDisplay().description());
 
         // Build announcement message similar to vanilla
         String message = player.getName() + " has made the advancement [" + title + "]";
@@ -135,12 +140,5 @@ public class PaperEventAdapter implements Listener {
                 description,
                 message
         ));
-    }
-
-    private String stripColors(String text) {
-        if (text == null) return null;
-        // Strip both legacy color codes (&x, section sign) and Adventure format
-        return text.replaceAll("(?i)[&\u00A7][0-9A-FK-OR]", "")
-                   .replaceAll("<[^>]+>", "");
     }
 }

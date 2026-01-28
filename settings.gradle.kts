@@ -1,24 +1,29 @@
+rootProject.name = "EventNotifications"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     repositories {
-        maven("https://maven.fabricmc.net/")
-        maven("https://maven.neoforged.net/releases")
-        gradlePluginPortal()
         mavenCentral()
+        gradlePluginPortal()
+        maven {
+            name = "fabric-repo"
+            url = uri("https://maven.fabricmc.net/")
+        }
     }
 }
 
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
-        maven("https://maven.fabricmc.net/")
-        maven("https://repo.spongepowered.org/repository/maven-public/")
-        maven("https://repo.papermc.io/repository/maven-public/")
+        maven {
+            name = "papermc-repo"
+            url = uri("https://repo.papermc.io/repository/maven-public/")
+        }
+        maven {
+            name = "sponge-repo"
+            url = uri("https://repo.spongepowered.org/repository/maven-public/")
+        }
     }
 }
 
-rootProject.name = "EventNotifications"
-
-include("core")
-include("fabric")
-include("paper")
-include("neoforge")
+include(":core", ":fabric", ":paper", ":neoforge")

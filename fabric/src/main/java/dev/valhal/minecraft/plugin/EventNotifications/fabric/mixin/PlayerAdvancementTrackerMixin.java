@@ -2,11 +2,10 @@ package dev.valhal.minecraft.plugin.EventNotifications.fabric.mixin;
 
 import dev.valhal.minecraft.plugin.EventNotifications.fabric.FabricEventAdapter;
 import dev.valhal.minecraft.plugin.EventNotifications.fabric.FabricMod;
-import net.minecraft.advancement.AdvancementEntry;
-import net.minecraft.advancement.AdvancementProgress;
-import net.minecraft.advancement.PlayerAdvancementTracker;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,17 +14,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
 
-@Mixin(PlayerAdvancementTracker.class)
+@Mixin(PlayerAdvancements.class)
 public abstract class PlayerAdvancementTrackerMixin {
 
     @Shadow
-    private ServerPlayerEntity owner;
+    private ServerPlayer player;
 
     @Shadow
-    private Map<AdvancementEntry, AdvancementProgress> progress;
+    private Map<AdvancementHolder, AdvancementProgress> progress;
 
-    @Inject(method = "grantCriterion", at = @At("RETURN"))
-    private void onGrantCriterion(AdvancementEntry advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(method = "award", at = @At("RETURN"))
+    private void onGrantCriterion(AdvancementHolder advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
         try {
             // Only proceed if the criterion was actually granted
             if (!cir.getReturnValue()) return;
@@ -40,18 +39,18 @@ public abstract class PlayerAdvancementTrackerMixin {
             if (display.isHidden()) return;
 
             // Only announce if configured to show in chat
-            if (!display.shouldAnnounceToChat()) return;
+            if (!display.shouldAnnounceChat()) return;
 
             FabricEventAdapter adapter = FabricEventAdapter.getInstance();
             if (adapter == null) return;
 
             String title = display.getTitle().getString();
             String description = display.getDescription().getString();
-            String chatMessage = display.getFrame().getChatAnnouncementText(advancement, owner).getString();
+            String chatMessage = display.getType().createAnnouncement(advancement, player).getString();
 
             adapter.onPlayerAdvancement(
-                    owner.getUuid(),
-                    owner.getName().getString(),
+                    player.getUUID(),
+                    player.getName().getString(),
                     title,
                     description,
                     chatMessage

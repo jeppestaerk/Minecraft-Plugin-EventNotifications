@@ -14,9 +14,12 @@ import java.util.Map;
 import java.util.Set;
 
 public class TemplateLoader {
+    private static final String MESSAGE_TEMPLATE_KEY = "message";
+
     private final Path templatesDir;
     private final Map<String, TemplateConfig> templatesByType;
     private TemplateConfig defaultTemplates;
+    private TemplateConfig.EventTemplate customMessageTemplate;
 
     public TemplateLoader(Path templatesDir) {
         this.templatesDir = templatesDir;
@@ -77,13 +80,21 @@ public class TemplateLoader {
             }
         }
 
+        // Load custom_message template (only from default.yml)
+        ConfigurationNode customMessageNode = root.node(MESSAGE_TEMPLATE_KEY);
+        if (!customMessageNode.virtual()) {
+            customMessageTemplate = loadEventTemplate(customMessageNode);
+        } else {
+            customMessageTemplate = getBuiltInMessageDefault();
+        }
+
         // Merge defaults for any missing templates
-        mergeDefaults(root, path, loader);
+        mergeDefaults(root, loader);
 
         return new TemplateConfig(templates);
     }
 
-    private void mergeDefaults(ConfigurationNode root, Path path, YamlConfigurationLoader loader) throws IOException {
+    private void mergeDefaults(ConfigurationNode root, YamlConfigurationLoader loader) throws IOException {
         boolean updated = false;
 
         for (GameEventType type : GameEventType.values()) {
@@ -99,6 +110,19 @@ public class TemplateLoader {
                 }
                 updated = true;
             }
+        }
+
+        // Add custom_message template if missing
+        ConfigurationNode customMessageNode = root.node(MESSAGE_TEMPLATE_KEY);
+        if (customMessageNode.virtual()) {
+            TemplateConfig.EventTemplate defaultTemplate = getBuiltInMessageDefault();
+            customMessageNode.node("enabled").set(defaultTemplate.enabled());
+            customMessageNode.node("title").set(defaultTemplate.title());
+            customMessageNode.node("message").set(defaultTemplate.message());
+            for (Map.Entry<String, Object> extra : defaultTemplate.extras().entrySet()) {
+                customMessageNode.node(extra.getKey()).set(extra.getValue());
+            }
+            updated = true;
         }
 
         if (updated) {
@@ -139,6 +163,22 @@ public class TemplateLoader {
 
         // Built-in fallback
         return getBuiltInDefault(type);
+    }
+
+    /**
+     * Gets the template for messages sent via the /eventnotifications message command.
+     */
+    public TemplateConfig.EventTemplate getMessageTemplate() {
+        return customMessageTemplate != null ? customMessageTemplate : getBuiltInMessageDefault();
+    }
+
+    /**
+     * Built-in default template for the message command.
+     */
+    public TemplateConfig.EventTemplate getBuiltInMessageDefault() {
+        return new TemplateConfig.EventTemplate(true,
+                "{{server_name}} - Message", "{{message}}",
+                Map.of("priority", "default", "tags", "speech_balloon,video_game", "color", "#9b59b6"));
     }
 
     public TemplateConfig.EventTemplate getBuiltInDefault(GameEventType type) {
@@ -224,6 +264,7 @@ public class TemplateLoader {
                 #   server_shutdown: (no additional placeholders)
                 #   server_whitelist_on: (no additional placeholders)
                 #   server_whitelist_off: (no additional placeholders)
+                #   message: {{message}} (for /eventnotifications message command)
 
                 """);
 
@@ -239,6 +280,18 @@ public class TemplateLoader {
             }
             sb.append("\n");
         }
+
+        // Add message template
+        TemplateConfig.EventTemplate customMsg = getBuiltInMessageDefault();
+        sb.append("# Template for /eventnotifications message command\n");
+        sb.append(MESSAGE_TEMPLATE_KEY).append(":\n");
+        sb.append("  enabled: ").append(customMsg.enabled()).append("\n");
+        sb.append("  title: \"").append(customMsg.title()).append("\"\n");
+        sb.append("  message: \"").append(customMsg.message()).append("\"\n");
+        for (Map.Entry<String, Object> extra : customMsg.extras().entrySet()) {
+            sb.append("  ").append(extra.getKey()).append(": \"").append(extra.getValue()).append("\"\n");
+        }
+        sb.append("\n");
 
         return sb.toString();
     }

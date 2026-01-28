@@ -1,18 +1,20 @@
 [versions]
-# Project
-mod = "0.1.0"
+# Core
 java = "21"
-
-# Minecraft / Fabric
+kotlin-jvm = "2.3.0"
 minecraft = "1.21.11"
+
+# Fabric
 yarn-mappings = "1.21.11+build.4"
 fabric-loader = "0.18.4"
 fabric-loom = "1.15-SNAPSHOT"
 fabric-api = "0.141.2+1.21.11"
+fabric-language-kotlin = "1.13.8+kotlin.2.3.0"
 
 # Paper
 paper-api = "1.21.4-R0.1-SNAPSHOT"
 shadow = "9.0.0-beta4"
+run-paper = "2.3.1"
 
 # NeoForge
 neoforge = "21.11.37-beta"
@@ -22,20 +24,41 @@ moddevgradle = "2.0.140"
 configurate = "4.2.0"
 kyori-option = "1.1.0"
 geantyref = "2.0.1"
+snakeyaml = "2.5"
 
 [libraries]
-minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
-yarn-mappings = { module = "net.fabricmc:yarn", version.ref = "yarn-mappings" }
-fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
-fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
-paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
-neoforge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
+# Core
 configurate-yaml = { module = "org.spongepowered:configurate-yaml", version.ref = "configurate" }
 configurate-core = { module = "org.spongepowered:configurate-core", version.ref = "configurate" }
 kyori-option = { module = "net.kyori:option", version.ref = "kyori-option" }
 geantyref = { module = "io.leangen.geantyref:geantyref", version.ref = "geantyref" }
+snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
+
+# Minecraft
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+
+# Fabric
+yarn-mappings = { module = "net.fabricmc:yarn", version.ref = "yarn-mappings" }
+fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
+fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
+fabric-language-kotlin = { module = "net.fabricmc:fabric-language-kotlin", version.ref = "fabric-language-kotlin" }
+
+# Paper
+paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
+
+# NeoForge
+neoforge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
 
 [plugins]
+# Core
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-jvm" }
+
+# Fabric
 fabric-loom = { id = "fabric-loom", version.ref = "fabric-loom" }
+
+# Paper
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+run-paper = { id = "xyz.jpenilla.run-paper", version.ref = "run-paper" }
+
+#NeoForge
 moddevgradle = { id = "net.neoforged.moddev", version.ref = "moddevgradle" }

@@ -32,17 +32,17 @@ jobs:
       - name: Upload Fabric artifact
         uses: actions/upload-artifact@v6
         with:
-          name: eventnotifications-fabric-${{ steps.version.outputs.version }}
-          path: fabric/build/libs/eventnotifications-fabric-${{ steps.version.outputs.version }}.jar
+          name: EventNotifications-Fabric-${{ steps.version.outputs.version }}
+          path: fabric/build/libs/EventNotifications-Fabric-${{ steps.version.outputs.version }}.jar
 
       - name: Upload Paper artifact
         uses: actions/upload-artifact@v6
         with:
-          name: eventnotifications-paper-${{ steps.version.outputs.version }}
-          path: paper/build/libs/eventnotifications-paper-${{ steps.version.outputs.version }}.jar
+          name: EventNotifications-Paper-${{ steps.version.outputs.version }}
+          path: paper/build/libs/EventNotifications-Paper-${{ steps.version.outputs.version }}.jar
 
       - name: Upload NeoForge artifact
         uses: actions/upload-artifact@v6
         with:
-          name: eventnotifications-neoforge-${{ steps.version.outputs.version }}
-          path: neoforge/build/libs/eventnotifications-neoforge-${{ steps.version.outputs.version }}.jar
+          name: EventNotifications-NeoForge-${{ steps.version.outputs.version }}
+          path: neoforge/build/libs/EventNotifications-NeoForge-${{ steps.version.outputs.version }}.jar
