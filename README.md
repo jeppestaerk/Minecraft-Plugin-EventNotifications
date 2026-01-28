@@ -1,6 +1,21 @@
-# EventNotifications
+<p align="center">
+  <img src="assets/logo-medium.png" alt="EventNotifications Logo" width="300">
+</p>
 
-A multi-loader Minecraft mod/plugin that sends real-time notifications when server events occur. Supports ntfy, Discord, Slack, and generic webhooks.
+<p align="center">
+  <a href="https://github.com/jeppestaerk/Minecraft-Plugin-EventNotifications/releases/latest"><img src="https://img.shields.io/github/v/release/jeppestaerk/Minecraft-Plugin-EventNotifications?style=for-the-badge" alt="Release"></a>
+  <a href="https://github.com/jeppestaerk/Minecraft-Plugin-EventNotifications/blob/main/LICENSE"><img src="https://img.shields.io/github/license/jeppestaerk/Minecraft-Plugin-EventNotifications?style=for-the-badge" alt="License"></a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Fabric-1.21.11+-00AA00?style=for-the-badge" alt="Fabric">
+  <img src="https://img.shields.io/badge/NeoForge-1.21.11+-00AA00?style=for-the-badge" alt="NeoForge">
+  <img src="https://img.shields.io/badge/Paper-1.21.11+-00AA00?style=for-the-badge" alt="Paper">
+</p>
+
+# Minecraft EventNotifications mod/plugin
+
+***Real-time server event notifications for Minecraft*** — supports ntfy, Discord, Slack, and webhooks.
 
 ## Supported Loaders
 
@@ -14,23 +29,23 @@ A multi-loader Minecraft mod/plugin that sends real-time notifications when serv
 
 ### Supported Events
 
-| Event | Description |
-|-------|-------------|
-| Server Startup | Server has started |
-| Server Shutdown | Server is stopping |
-| Player Connect | Player joined the server |
-| Player Disconnect | Player left the server |
-| Player Death | Player died (includes death message) |
-| Player Advancement | Player earned an advancement |
-| Player Banned | Player was banned |
-| Player Kicked | Player was kicked |
-| Player Pardoned | Player was unbanned |
-| Player OP | Player was given operator status |
-| Player De-OP | Player's operator status was removed |
-| Player Whitelisted | Player was added to whitelist |
+| Event                | Description |
+|----------------------|-------------|
+| Player Connect       | Player joined the server |
+| Player Disconnect    | Player left the server |
+| Player Death         | Player died (includes death message) |
+| Player Advancement   | Player earned an advancement |
+| Player Kicked        | Player was kicked |
+| Player Banned        | Player was banned |
+| Player Pardoned      | Player was unbanned |
+| Player OP            | Player was given operator status |
+| Player De-OP         | Player's operator status was removed |
+| Player Whitelisted   | Player was added to whitelist |
 | Player Unwhitelisted | Player was removed from whitelist |
-| Whitelist On | Server whitelist was enabled |
-| Whitelist Off | Server whitelist was disabled |
+| Server Startup       | Server has started |
+| Server Shutdown      | Server is stopping |
+| Server Whitelist On  | Server whitelist was enabled |
+| Server Whitelist Off | Server whitelist was disabled |
 
 ### Notification Targets
 
@@ -43,23 +58,21 @@ A multi-loader Minecraft mod/plugin that sends real-time notifications when serv
 
 ### Fabric
 
-1. Install [Fabric Loader](https://fabricmc.net/use/) and [Fabric API](https://modrinth.com/mod/fabric-api)
-2. Download `eventnotifications-fabric-x.x.x.jar` from [Releases](../../releases)
-3. Place the JAR in your `mods/` folder
-4. Start the server to generate config files
-5. Configure `config/eventnotifications/config.yml`
+1. Download `EventNotifications-Fabric-x.x.x.jar` from [Releases](../../releases)
+2. Place the JAR in your `mods/` folder
+3. Start the server to generate config files
+4. Configure `config/eventnotifications/config.yml`
 
 ### NeoForge
 
-1. Install [NeoForge](https://neoforged.net/)
-2. Download `eventnotifications-neoforge-x.x.x.jar` from [Releases](../../releases)
-3. Place the JAR in your `mods/` folder
-4. Start the server to generate config files
-5. Configure `config/eventnotifications/config.yml`
+1. Download `EventNotifications-NeoForge-x.x.x.jar` from [Releases](../../releases)
+2. Place the JAR in your `mods/` folder
+3. Start the server to generate config files
+4. Configure `config/eventnotifications/config.yml`
 
 ### Paper/Spigot/Bukkit
 
-1. Download `eventnotifications-paper-x.x.x.jar` from [Releases](../../releases)
+1. Download `EventNotifications-Paper-x.x.x.jar` from [Releases](../../releases)
 2. Place the JAR in your `plugins/` folder
 3. Start the server to generate config files
 4. Configure `plugins/EventNotifications/config.yml`
@@ -72,6 +85,8 @@ A multi-loader Minecraft mod/plugin that sends real-time notifications when serv
 general:
   # Server name for notifications (uses MOTD if not set)
   server_name: "My Server"
+  # Enable in-game commands (/eventnotifications) for managing targets
+  commands_enabled: true
 
 targets:
   # ntfy target
@@ -146,56 +161,19 @@ player_death:
 | player_kicked | `{{reason}}` |
 | player_banned | `{{banned_by}}`, `{{reason}}` |
 
-## Building from Source
+## Commands
 
-Requirements:
-- Java 21+
-- Gradle 9+
+Manage notification targets in-game with the `/eventnotifications` command (requires OP or `eventnotifications.admin` permission):
 
-```bash
-# Build all modules
-./gradlew build
-
-# Build specific loader
-./gradlew :fabric:build
-./gradlew :neoforge:build
-./gradlew :paper:build
-```
-
-Output JARs are in:
-- `fabric/build/libs/eventnotifications-fabric-*.jar`
-- `neoforge/build/libs/eventnotifications-neoforge-*.jar`
-- `paper/build/libs/eventnotifications-paper-*.jar`
-
-## Development
-
-### Project Structure
-
-```
-EventNotifications/
-├── core/           # Shared loader-agnostic code
-├── fabric/         # Fabric mod
-├── neoforge/       # NeoForge mod
-├── paper/          # Paper/Spigot plugin
-└── gradle/         # Version catalog
-```
-
-### Local Testing with Docker
-
-A Docker Compose setup is provided for testing:
-
-```bash
-# Test with Fabric
-docker compose --profile fabric up
-
-# Test with Paper
-docker compose --profile paper up
-
-# Test with NeoForge
-docker compose --profile neoforge up
-```
-
-This starts a Minecraft server with ntfy for testing notifications.
+| Command | Description |
+|---------|-------------|
+| `/eventnotifications reload` | Reload configuration from disk |
+| `/eventnotifications list` | List all targets with their status |
+| `/eventnotifications info <name>` | Show details for a target |
+| `/eventnotifications enable <name>` | Enable a target |
+| `/eventnotifications disable <name>` | Disable a target |
+| `/eventnotifications set <name> <property> <value>` | Change a target property |
+| `/eventnotifications message <name> <message>` | Send a test message to a target |
 
 ## License
 

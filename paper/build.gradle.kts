@@ -1,10 +1,11 @@
 plugins {
     java
     alias(libs.plugins.shadow)
+    alias(libs.plugins.run.paper)
 }
 
 base {
-    archivesName.set("eventnotifications-paper")
+    archivesName.set("EventNotifications-Paper")
 }
 
 dependencies {
@@ -17,17 +18,29 @@ dependencies {
     implementation(libs.geantyref)
 }
 
+tasks.compileJava {
+    options.compilerArgs.add("-Xlint:deprecation")
+}
+
+val modVersion = project.version.toString()
+
 tasks.processResources {
-    inputs.property("version", project.version)
+    inputs.property("version", modVersion)
 
     filesMatching("plugin.yml") {
-        expand("version" to project.version)
+        expand("version" to modVersion)
+    }
+}
+
+tasks.jar {
+    manifest {
+        attributes["paperweight-mappings-namespace"] = "mojang"
     }
 }
 
 tasks.shadowJar {
     archiveClassifier.set("")
-    archiveVersion.set(project.version.toString())
+    archiveVersion.set(modVersion)
 
     relocate("org.spongepowered.configurate", "dev.valhal.minecraft.plugin.EventNotifications.libs.configurate")
     relocate("org.yaml.snakeyaml", "dev.valhal.minecraft.plugin.EventNotifications.libs.snakeyaml")
@@ -41,4 +54,13 @@ tasks.shadowJar {
 
 tasks.build {
     dependsOn(tasks.shadowJar)
+}
+
+tasks {
+    runServer {
+        // Configure the Minecraft version for our task.
+        // This is the only required configuration besides applying the plugin.
+        // Your plugin's jar (or shadowJar if present) will be used automatically.
+        minecraftVersion(libs.versions.minecraft.get())
+    }
 }

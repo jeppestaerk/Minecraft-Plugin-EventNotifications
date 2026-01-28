@@ -4,7 +4,7 @@ import dev.valhal.minecraft.plugin.EventNotifications.core.event.*;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.function.Consumer;
 
@@ -31,7 +31,7 @@ public class FabricEventAdapter {
         // Server lifecycle events
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             // Provide the server MOTD as the server name if config didn't specify one
-            String motd = server.getServerMotd();
+            String motd = server.getMotd();
             if (motd != null && !motd.isBlank()) {
                 serverNameCallback.accept(motd);
             } else {
@@ -49,7 +49,7 @@ public class FabricEventAdapter {
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             var player = handler.getPlayer();
             eventBus.publish(new PlayerConnectEvent(
-                    player.getUuid(),
+                    player.getUUID(),
                     player.getName().getString()
             ));
         });
@@ -57,18 +57,18 @@ public class FabricEventAdapter {
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             var player = handler.getPlayer();
             eventBus.publish(new PlayerDisconnectEvent(
-                    player.getUuid(),
+                    player.getUUID(),
                     player.getName().getString()
             ));
         });
 
         // Player death event - use ALLOW_DEATH to capture message before tracker is cleared
         ServerLivingEntityEvents.ALLOW_DEATH.register((entity, damageSource, damageAmount) -> {
-            if (entity instanceof ServerPlayerEntity player) {
-                // Use DamageTracker to get the same message that's sent to chat
-                String deathMessage = player.getDamageTracker().getDeathMessage().getString();
+            if (entity instanceof ServerPlayer player) {
+                // Use CombatTracker to get the same message that's sent to chat
+                String deathMessage = player.getCombatTracker().getDeathMessage().getString();
                 eventBus.publish(new PlayerDeathEvent(
-                        player.getUuid(),
+                        player.getUUID(),
                         player.getName().getString(),
                         deathMessage
                 ));

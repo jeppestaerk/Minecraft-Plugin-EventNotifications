@@ -4,7 +4,7 @@ plugins {
 }
 
 base {
-    archivesName.set("eventnotifications-neoforge")
+    archivesName.set("EventNotifications-NeoForge")
 }
 
 neoForge {
@@ -17,7 +17,7 @@ neoForge {
     }
 
     mods {
-        create("eventnotifications") {
+        create("EventNotifications") {
             sourceSet(sourceSets.main.get())
         }
     }
@@ -47,23 +47,35 @@ dependencies {
             strictly("[${libs.versions.geantyref.get()},)")
         }
     }
+    jarJar(libs.snakeyaml) {
+        version {
+            strictly("[${libs.versions.snakeyaml.get()},)")
+        }
+    }
 
     implementation(libs.configurate.yaml)
     implementation(libs.configurate.core)
     implementation(libs.kyori.option)
     implementation(libs.geantyref)
+    implementation(libs.snakeyaml)
 }
 
+val modVersion = project.version.toString()
+
 tasks.processResources {
-    inputs.property("version", project.version)
+    inputs.property("version", modVersion)
 
     filesMatching("META-INF/neoforge.mods.toml") {
-        expand("version" to project.version)
+        expand("version" to modVersion)
     }
 }
 
 tasks.jar {
     archiveClassifier.set("")
-    archiveVersion.set(project.version.toString())
+    archiveVersion.set(modVersion)
     dependsOn(tasks.named("jarJar"))
+}
+
+tasks.build {
+    dependsOn(tasks.jar)
 }

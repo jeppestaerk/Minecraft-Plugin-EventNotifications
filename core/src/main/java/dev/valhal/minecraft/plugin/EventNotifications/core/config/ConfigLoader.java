@@ -1,6 +1,7 @@
 package dev.valhal.minecraft.plugin.EventNotifications.core.config;
 
 import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.IOException;
@@ -16,20 +17,68 @@ public class ConfigLoader {
         this.configPath = configPath;
     }
 
+    public Path getConfigPath() {
+        return configPath;
+    }
+
     public PluginConfig load() throws IOException {
         ensureConfigExists();
 
         YamlConfigurationLoader loader = YamlConfigurationLoader.builder()
                 .path(configPath)
+                .nodeStyle(NodeStyle.BLOCK)
                 .build();
 
         ConfigurationNode root = loader.load();
 
-        // Server name from config, or empty to use MOTD at runtime
-        String serverName = root.node("general", "server_name").getString("");
+        // Merge defaults for any missing config options
+        mergeDefaults(root, loader);
+
+        // Load general settings
+        GeneralConfig general = loadGeneralConfig(root.node("general"));
         List<TargetConfig> targets = loadTargets(root.node("targets"));
 
-        return new PluginConfig(serverName, targets);
+        return new PluginConfig(general, targets);
+    }
+
+    private GeneralConfig loadGeneralConfig(ConfigurationNode node) {
+        String serverName = node.node("server_name").getString("");
+        boolean commandsEnabled = node.node("commands_enabled").getBoolean(true);
+        String commandAlias = node.node("command_alias").getString("en");
+        return new GeneralConfig(serverName, commandsEnabled, commandAlias);
+    }
+
+    /**
+     * Merges default values into the config file for any missing options.
+     * Similar to TemplateLoader.mergeDefaults() - ensures user configs get updated
+     * with new options added in newer versions.
+     */
+    private void mergeDefaults(ConfigurationNode root, YamlConfigurationLoader loader) throws IOException {
+        boolean updated = false;
+
+        ConfigurationNode generalNode = root.node("general");
+
+        // Default values for general options (use LinkedHashMap to preserve order)
+        Map<String, Object> generalDefaults = new LinkedHashMap<>();
+        generalDefaults.put("server_name", "");
+        generalDefaults.put("commands_enabled", true);
+        generalDefaults.put("command_alias", "notify");
+
+        for (Map.Entry<String, Object> entry : generalDefaults.entrySet()) {
+            ConfigurationNode node = generalNode.node(entry.getKey());
+            if (node.virtual()) {
+                node.set(entry.getValue());
+                updated = true;
+            }
+        }
+
+        if (updated) {
+            // Rebuild root with correct order: general first, then targets
+            ConfigurationNode newRoot = loader.createNode();
+            newRoot.node("general").set(root.node("general"));
+            newRoot.node("targets").set(root.node("targets"));
+            loader.save(newRoot);
+        }
     }
 
     private void ensureConfigExists() throws IOException {
@@ -80,6 +129,10 @@ public class ConfigLoader {
                 general:
                   # Server name for notifications (optional - uses server MOTD if not set)
                   server_name: ""
+                  # Enable in-game commands (/eventnotifications) for managing targets
+                  commands_enabled: true
+                  # Command alias (e.g., "en" creates /en as shortcut, empty string to disable)
+                  command_alias: "en"
 
                 # Notification targets
                 # Uncomment and configure the targets you want to use
@@ -107,5 +160,37 @@ public class ConfigLoader {
                   #   url: "https://example.com/webhook"
                   #   method: "POST"
                 """;
+    }
+
+    public void save(PluginConfig config) throws IOException {
+        YamlConfigurationLoader loader = YamlConfigurationLoader.builder()
+                .path(configPath)
+                .nodeStyle(NodeStyle.BLOCK)
+                .build();
+
+        ConfigurationNode root = loader.createNode();
+
+        // Save general section
+        saveGeneralConfig(root.node("general"), config.general());
+
+        // Save targets
+        ConfigurationNode targetsNode = root.node("targets");
+        for (TargetConfig target : config.targets()) {
+            ConfigurationNode targetNode = targetsNode.node(target.name());
+            targetNode.node("type").set(target.type());
+            targetNode.node("enabled").set(target.enabled());
+
+            for (Map.Entry<String, Object> prop : target.properties().entrySet()) {
+                targetNode.node(prop.getKey()).set(prop.getValue());
+            }
+        }
+
+        loader.save(root);
+    }
+
+    private void saveGeneralConfig(ConfigurationNode node, GeneralConfig general) throws IOException {
+        node.node("server_name").set(general.serverName());
+        node.node("commands_enabled").set(general.commandsEnabled());
+        node.node("command_alias").set(general.commandAlias());
     }
 }

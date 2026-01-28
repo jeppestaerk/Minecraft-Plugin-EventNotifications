@@ -4,18 +4,26 @@ plugins {
 }
 
 base {
-    archivesName.set("eventnotifications-fabric")
+    archivesName.set("EventNotifications-Fabric")
 }
 
-tasks.remapJar {
-    archiveVersion.set(project.version.toString())
+loom {
+    splitEnvironmentSourceSets()
+
+    mods {
+        register("eventnotifications") {
+            sourceSet(sourceSets["main"])
+            sourceSet(sourceSets["client"])
+        }
+    }
 }
 
 dependencies {
     minecraft(libs.minecraft)
-    mappings("${libs.yarn.mappings.get()}:v2")
+    mappings(loom.officialMojangMappings())
     modImplementation(libs.fabric.loader)
     modImplementation(libs.fabric.api)
+    modImplementation(libs.fabric.language.kotlin)
 
     implementation(project(":core"))
     include(project(":core"))
@@ -24,12 +32,24 @@ dependencies {
     include(libs.configurate.core)
     include(libs.kyori.option)
     include(libs.geantyref)
+    include(libs.snakeyaml)
 }
 
+val modVersion = project.version.toString()
+
 tasks.processResources {
-    inputs.property("version", project.version)
+    inputs.property("version", modVersion)
 
     filesMatching("fabric.mod.json") {
-        expand("version" to project.version)
+        expand("version" to modVersion)
     }
+}
+
+tasks.remapJar {
+    archiveClassifier.set("")
+    archiveVersion.set(modVersion)
+}
+
+tasks.build {
+    dependsOn(tasks.remapJar)
 }

@@ -1,10 +1,14 @@
 package dev.valhal.minecraft.plugin.EventNotifications.paper;
 
+import dev.valhal.minecraft.plugin.EventNotifications.core.command.CommandHandler;
 import dev.valhal.minecraft.plugin.EventNotifications.core.config.ConfigLoader;
+import dev.valhal.minecraft.plugin.EventNotifications.core.config.ConfigManager;
 import dev.valhal.minecraft.plugin.EventNotifications.core.config.PluginConfig;
 import dev.valhal.minecraft.plugin.EventNotifications.core.config.TemplateLoader;
 import dev.valhal.minecraft.plugin.EventNotifications.core.event.EventBus;
 import dev.valhal.minecraft.plugin.EventNotifications.core.notification.NotificationService;
+import dev.valhal.minecraft.plugin.EventNotifications.paper.command.PaperCommandAdapter;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.nio.file.Path;
@@ -16,6 +20,8 @@ public class PaperPlugin extends JavaPlugin {
     private NotificationService notificationService;
     private PaperAsyncExecutor asyncExecutor;
     private PaperEventAdapter eventAdapter;
+    private ConfigManager configManager;
+    private CommandHandler commandHandler;
 
     @Override
     public void onEnable() {
@@ -28,7 +34,8 @@ public class PaperPlugin extends JavaPlugin {
             Path templatesDir = configDir.resolve("templates");
 
             ConfigLoader configLoader = new ConfigLoader(configFile);
-            PluginConfig config = configLoader.load();
+            configManager = new ConfigManager(configLoader, msg -> log(msg));
+            PluginConfig config = configManager.load();
 
             TemplateLoader templateLoader = new TemplateLoader(templatesDir);
             templateLoader.load();
@@ -38,6 +45,22 @@ public class PaperPlugin extends JavaPlugin {
 
             notificationService = new NotificationService(config, templateLoader, asyncExecutor, msg -> log(msg));
             notificationService.registerWithEventBus(eventBus);
+
+            // Register commands if enabled in config
+            if (config.commandsEnabled()) {
+                commandHandler = new CommandHandler(configManager, notificationService, msg -> log(msg));
+                PaperCommandAdapter commandAdapter = new PaperCommandAdapter(commandHandler);
+
+                PluginCommand eventNotificationsCmd = getCommand("eventnotifications");
+                if (eventNotificationsCmd != null) {
+                    eventNotificationsCmd.setExecutor(commandAdapter);
+                    eventNotificationsCmd.setTabCompleter(commandAdapter);
+                }
+
+                log("Commands enabled");
+            } else {
+                log("Commands disabled in config");
+            }
 
             // Only use MOTD as server name if config doesn't specify one
             boolean useMotdAsServerName = config.serverName() == null || config.serverName().isBlank();

@@ -1,6 +1,5 @@
-# https://docker-minecraft-server.readthedocs.io
 # https://docs.ntfy.sh/config/#config-options
-name: minecraft-eventnotifications
+name: ntfy
 services:
 
   ntfy:
@@ -35,102 +34,9 @@ services:
       ntfy:
         condition: service_started
 
-  mc-fabric:
-    image: itzg/minecraft-server:latest
-    container_name: minecraft-eventnotifications-fabric
-    restart: unless-stopped
-    environment:
-      TZ: Europe/Copenhagen
-      EULA: "TRUE"
-      VERSION: 1.21.11
-      MOTD: Fabric Server
-      TYPE: FABRIC
-      MODRINTH_PROJECTS: |
-        fabric-api
-      REMOVE_OLD_MODS: "TRUE"
-      REMOVE_OLD_MODS_INCLUDE: eventnotifications*
-      SYNC_SKIP_NEWER_IN_DESTINATION: false
-    tty: true
-    stdin_open: true
-    ports:
-      - "25565:25565"
-      - "25565:25565/udp"
-    volumes:
-      - ./fabric/build/libs:/mods:ro
-      - ./run/config:/config:ro
-      - ./run/fabric:/data
-    depends_on:
-      ntfy:
-        condition: service_started
-      ntfy-client:
-        condition: service_started
-    profiles:
-      - fabric
-
-  mc-paper:
-    image: itzg/minecraft-server:latest
-    container_name: minecraft-eventnotifications-paper
-    restart: unless-stopped
-    environment:
-      TZ: Europe/Copenhagen
-      EULA: "TRUE"
-      VERSION: 1.21.11
-      MOTD: Paper Server
-      TYPE: PAPER
-      REMOVE_OLD_MODS: "TRUE"
-      REMOVE_OLD_MODS_INCLUDE: eventnotifications*
-      SYNC_SKIP_NEWER_IN_DESTINATION: false
-    tty: true
-    stdin_open: true
-    ports:
-      - "25565:25565"
-      - "25565:25565/udp"
-    volumes:
-      - ./paper/build/libs:/plugins:ro
-      - ./run/config/eventnotifications:/data/plugins/EventNotifications:ro
-      - ./run/paper:/data
-    depends_on:
-      ntfy:
-        condition: service_started
-      ntfy-client:
-        condition: service_started
-    profiles:
-      - paper
-
-  mc-neoforge:
-    image: itzg/minecraft-server:latest
-    container_name: minecraft-eventnotifications-neoforge
-    restart: unless-stopped
-    environment:
-      TZ: Europe/Copenhagen
-      EULA: "TRUE"
-      VERSION: 1.21.11
-      MOTD: NeoForge Server
-      TYPE: NEOFORGE
-      NEOFORGE_VERSION: "beta"
-      REMOVE_OLD_MODS: "TRUE"
-      REMOVE_OLD_MODS_INCLUDE: eventnotifications*
-      SYNC_SKIP_NEWER_IN_DESTINATION: false
-    tty: true
-    stdin_open: true
-    ports:
-      - "25565:25565"
-      - "25565:25565/udp"
-    volumes:
-      - ./neoforge/build/libs:/mods:ro
-      - ./run/config:/config:ro
-      - ./run/neoforge:/data
-    depends_on:
-      ntfy:
-        condition: service_started
-      ntfy-client:
-        condition: service_started
-    profiles:
-      - neoforge
-
 networks:
   default:
-    name: minecraft-eventnotifications
+    name: ntfy
 
 configs:
   ntfy-client-config:

@@ -1,10 +1,10 @@
 package dev.valhal.minecraft.plugin.EventNotifications.fabric.mixin;
 
+import com.mojang.authlib.GameProfile;
 import dev.valhal.minecraft.plugin.EventNotifications.fabric.FabricEventAdapter;
 import dev.valhal.minecraft.plugin.EventNotifications.fabric.FabricMod;
-import net.minecraft.server.PlayerConfigEntry;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.dedicated.command.OpCommand;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.commands.OpCommand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,15 +14,15 @@ import java.util.Collection;
 
 @Mixin(OpCommand.class)
 public class OpCommandMixin {
-    @Inject(method = "op", at = @At("HEAD"))
-    private static void onOp(ServerCommandSource source, Collection<PlayerConfigEntry> targets, CallbackInfoReturnable<Integer> cir) {
+    @Inject(method = "opPlayers", at = @At("HEAD"))
+    private static void onOp(CommandSourceStack source, Collection<GameProfile> targets, CallbackInfoReturnable<Integer> cir) {
         try {
             FabricEventAdapter adapter = FabricEventAdapter.getInstance();
             if (adapter == null) return;
 
-            for (PlayerConfigEntry entry : targets) {
-                if (entry.id() == null || entry.name() == null) continue;
-                adapter.onPlayerOp(entry.id(), entry.name());
+            for (GameProfile profile : targets) {
+                if (profile.id() == null || profile.name() == null) continue;
+                adapter.onPlayerOp(profile.id(), profile.name());
             }
         } catch (Exception e) {
             FabricMod.log("OpCommandMixin error: {}", e.getMessage());
