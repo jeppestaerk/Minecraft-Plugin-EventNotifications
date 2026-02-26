@@ -30,19 +30,19 @@ jobs:
         run: echo "version=$(./gradlew properties -q | grep '^version:' | awk '{print $2}')" >> $GITHUB_OUTPUT
 
       - name: Upload Fabric artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: EventNotifications-Fabric-${{ steps.version.outputs.version }}
           path: fabric/build/libs/EventNotifications-Fabric-${{ steps.version.outputs.version }}.jar
 
       - name: Upload Paper artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: EventNotifications-Paper-${{ steps.version.outputs.version }}
           path: paper/build/libs/EventNotifications-Paper-${{ steps.version.outputs.version }}.jar
 
       - name: Upload NeoForge artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: EventNotifications-NeoForge-${{ steps.version.outputs.version }}
           path: neoforge/build/libs/EventNotifications-NeoForge-${{ steps.version.outputs.version }}.jar
