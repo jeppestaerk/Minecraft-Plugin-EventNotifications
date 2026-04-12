@@ -30,7 +30,7 @@ jobs:
         run: echo "version=$(./gradlew properties -q | grep '^version:' | awk '{print $2}')" >> $GITHUB_OUTPUT
 
       - name: Upload files to release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             fabric/build/libs/EventNotifications-Fabric-${{ steps.version.outputs.version }}.jar
