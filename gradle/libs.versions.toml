@@ -10,7 +10,7 @@ fabric-api = "0.141.2+1.21.11"
 fabric-language-kotlin = "1.13.8+kotlin.2.3.0"
 
 # Paper
-paper-api = "1.21.4-R0.1-SNAPSHOT"
+paper-api = "26.2.build.121-stable"
 shadow = "9.3.1"
 run-paper = "3.0.2"
 
