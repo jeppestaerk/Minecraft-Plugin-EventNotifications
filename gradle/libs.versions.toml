@@ -15,8 +15,8 @@ shadow = "9.3.1"
 run-paper = "3.0.2"
 
 # NeoForge
-neoforge = "21.11.37-beta"
-moddevgradle = "2.0.140"
+neoforge = "21.11.45"
+moddevgradle = "2.0.146"
 
 # Libraries
 configurate = "4.2.0"
