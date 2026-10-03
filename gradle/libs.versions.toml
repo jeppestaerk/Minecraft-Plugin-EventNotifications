@@ -16,7 +16,7 @@ run-paper = "3.0.2"
 
 # NeoForge
 neoforge = "21.11.37-beta"
-moddevgradle = "2.0.140"
+moddevgradle = "2.0.148"
 
 # Libraries
 configurate = "4.2.0"
